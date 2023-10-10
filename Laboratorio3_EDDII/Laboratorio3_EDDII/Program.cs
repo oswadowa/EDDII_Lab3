@@ -278,7 +278,8 @@ class Program
                     Console.WriteLine(" ");
                 }
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Mensaje #" + j + ": ");
+                int m = j + 1;
+                Console.WriteLine("Mensaje #" + m + ": ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(Procesos.DesEncryption(Usuario[i].recomendations[j], Order));
                 Console.WriteLine(" ");
