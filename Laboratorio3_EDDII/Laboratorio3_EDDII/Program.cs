@@ -115,7 +115,17 @@ class Program
         {
             for(int j = 0; j < LLave.Length; j++)
             {
-                DesEncrypted = DesEncrypted + DES[j, i];
+                if(DES[j,i] != "*")
+                {
+                    if(DES[j,i] == "_")
+                    {
+                        DesEncrypted = DesEncrypted + " ";
+                    }
+                    else
+                    {
+                        DesEncrypted = DesEncrypted + DES[j, i];
+                    }
+                }
             }
         }
         DesEncrypted.Replace('_',' ');
@@ -265,9 +275,13 @@ class Program
                 {
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
                     Console.WriteLine("Nombre del Individuo: "  + Usuario[i].name+ ". DPI del individuo: " + Usuario[i].dpi+".");
+                    Console.WriteLine(" ");
                 }
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Mensaje #" + j + ": ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Mensaje #" + j + ": " + Procesos.DesEncryption(Usuario[i].recomendations[j], Order));
+                Console.Write(Procesos.DesEncryption(Usuario[i].recomendations[j], Order));
+                Console.WriteLine(" ");
             }
             for(int j = 0; j < 3; j++)
             {
