@@ -38,12 +38,34 @@ class Program
             {
                 if(m < Message.Length)
                 {
-                    DES[j, i] = Message.Substring(m, 1);
+                    if (Message.Substring(m, 1) != null)
+                    {
+                        DES[j, i] = Message.Substring(m, 1);
+                    }
+                    else
+                    {
+                        DES[j, i] = ".";
+                    }
                 }
                 m++;
             }
         }
         string Encrypted = "";
+        for(int i = 0; i < (Message.Length / LLave.Length) + 1; i++)
+        {
+            for (int j = 0; j < LLave.Length; j++)
+            {
+                if(DES[j,i] == null)
+                {
+                    DES[j, i] = "*";
+                }
+                if(DES[j,i] == " ")
+                {
+                    DES[j, i] = "_";
+                }
+            }
+        }
+
         for(int i = 0; i < LLave.Length; i++)
         {
             for(int j = 0; j < LLave.Length; j++)
@@ -60,9 +82,51 @@ class Program
         return Encrypted;
     }
 
+    string DesEncryption(string EncMessage, int[] LLave)
+    {
+        string[,] DES = new string[LLave.Length, (EncMessage.Length / LLave.Length)];
+        int Recursión = (EncMessage.Length / LLave.Length) + 1;
+        int RecursiónBase = 0;
+        int m = 0;
+        for(int i = 0; i < LLave.Length; i++)
+        {
+            for(int j = 0; j < LLave.Length; j++)
+            {
+                if(LLave[j] == i)
+                {
+                    for(int k = 0; k < EncMessage.Length / LLave.Length; k++)
+                    {
+                        if(i == 0)
+                        {
+                            DES[j, k] = EncMessage.Substring(m, 1);
+                        }
+                        if( i != 0 && k + RecursiónBase < EncMessage.Length)
+                        {
+                            DES[j, k] = EncMessage.Substring(m, 1);
+                        }
+                        m++;
+                    }
+                }
+            }
+            RecursiónBase = Recursión + RecursiónBase;
+        }
+        string DesEncrypted = "";
+        for(int i = 0; i < (EncMessage.Length/LLave.Length); i++)
+        {
+            for(int j = 0; j < LLave.Length; j++)
+            {
+                DesEncrypted = DesEncrypted + DES[j, i];
+            }
+        }
+        DesEncrypted.Replace('_',' ');
+        DesEncrypted.Replace('*', ' ');
+
+        return DesEncrypted;
+    }
+
     static void Main(string[] args)
     {
-        Console.WriteLine("Escriba el dato que desea encrpitar");
+        Console.WriteLine("Escoja su llave");
         string Key = Console.ReadLine();
         //Se ordena alfabéticamente la llave//
         int filling = 1;
@@ -133,12 +197,12 @@ class Program
         }
         SearchRecomendations = archivos.Length;
         int count = 0;
+        Program Procesos = new Program();
         for (int i = 0; i < Size - 1; i++)
         {
             string eleccion = "";
             User input = JsonSerializer.Deserialize<User>(jsonObjectsData[i])!;
             eleccion = jsonObjectsAction[i];
-            Program Procesos = new Program();
             switch (eleccion)
             {
                 case "INSERT":
@@ -192,6 +256,23 @@ class Program
                     break;
             }
         }
-        
+        Console.Clear();
+        for(int i = 0; i < count; i++)
+        {
+            for(int j = 0; j < Usuario[i].CantRecomendations; j++)
+            {
+                if (j == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine("Nombre del Individuo: "  + Usuario[i].name+ ". DPI del individuo: " + Usuario[i].dpi+".");
+                }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Mensaje #" + j + ": " + Procesos.DesEncryption(Usuario[i].recomendations[j], Order));
+            }
+            for(int j = 0; j < 3; j++)
+            {
+                Console.WriteLine(" ");
+            }
+        }
     }
 }
